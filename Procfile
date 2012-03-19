@@ -1,0 +1,2 @@
+worker: ruby writer.rb
+
