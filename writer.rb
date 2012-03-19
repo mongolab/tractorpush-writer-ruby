@@ -63,7 +63,6 @@ for i in 1..count
   coll.insert(doc, :safe => true)
   if (debug == "true") then pp (doc) end
   sleep(1.0/rate) 
-  print rate
 end
 
 print("Finished. Inserted ", count, " messages.\n")
