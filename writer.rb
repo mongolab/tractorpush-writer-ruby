@@ -40,7 +40,7 @@ require 'pp'
 uristring = ENV['MONGOLAB_URI'] || 'mongodb://localhost/testdatabase'
 debug = ENV['WRITER_DEBUG'] || "false"
 rate = ENV['WRITER_RATE'].to_f 
-if (rate = 0.0) then rate = 10.0
+if (rate = 0.0) then rate = 10.0 end
 
 
 uri = URI.parse(uristring)
