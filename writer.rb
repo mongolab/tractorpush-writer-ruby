@@ -39,7 +39,8 @@ require 'pp'
 
 uristring = ENV['MONGOLAB_URI'] || 'mongodb://localhost/testdatabase'
 debug = ENV['WRITER_DEBUG'] || "false"
-rate = ENV['WRITER_RATE'].to_f || 10.0
+rate = ENV['WRITER_RATE'].to_f 
+if (rate = 0.0) then rate = 10.0
 
 
 uri = URI.parse(uristring)
@@ -61,7 +62,8 @@ for i in 1..count
   doc['ordinal'] = i
   coll.insert(doc, :safe => true)
   if (debug == "true") then pp (doc) end
-  sleep(1.0/rate)
+  sleep(1.0/rate) 
+  print rate
 end
 
 print("Finished. Inserted ", count, " messages.\n")
