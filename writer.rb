@@ -37,11 +37,11 @@ require 'uri'
 require 'mongo'
 require 'pp'
 
-uristring = ENV['MONGOLAB_URI'] || 'mongodb://localhost/testdatabase'
-debug = ENV['WRITER_DEBUG'] || "false"
-rate = ENV['WRITER_RATE'].to_f 
-if (rate = 0.0) then rate = 10.0 end
+STDOUT.sync = true # Write in real-time
 
+uristring = ENV['MONGOLAB_URI'] || 'mongodb://localhost/testdatabase'
+debug = ENV['WRITER_DEBUG'] ? ENV['WRITER_DEBUG'] == "true" : false
+rate = ENV['WRITER_RATE'] ? ENV['WRITER_RATE'].to_i : 1 # Every second, write a message 
 
 uri = URI.parse(uristring)
 conn = Mongo::Connection.from_uri(uristring)
@@ -53,17 +53,13 @@ docs = [{'messagetype' => 'simple', 'ordinal' => 0, 'somename' => 'somevalue'},
         {'messagetype' => 'array', 'ordinal' => 0, 'somearray' => ['a', 'b', 'c', 'd']}, 
         {'messagetype' => 'complex', 'ordinal' =>0, 'subdocument' => {'fname' => 'George', 'lname' => 'Washington', 'subproperty' => 'US-president'}}]
 
-
-count = 500
-print("starting insertion of ", count, " documents into ", uri.scheme, "://", uri.host, uri.path, "\n")
-for i in 1..count
+# Run until killed
+i = 0
+while(true)
   doc = docs[rand(3)].dup             # MongoDB collection.insert mutates document, editing the _id key; we need a deep dup (copy). 
   doc['time'] = Time.now().to_f * 1000 # Switch to Javascript's convention
-  doc['ordinal'] = i
+  doc['ordinal'] = i + 1
   coll.insert(doc, :safe => true)
-  if (debug == "true") then pp (doc) end
-  sleep(1.0/rate) 
+  debug ? pp(doc) : puts("Inserting #{doc['messagetype']} message")
+  sleep(rate)
 end
-
-print("Finished. Inserted ", count, " messages.\n")
-
