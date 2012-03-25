@@ -83,7 +83,7 @@ i = 0
 while(true)
   doc = docs[rand(3)].dup             # MongoDB collection.insert mutates document, editing the _id key; we need a deep dup (copy). 
   doc['time'] = Time.now().to_f * 1000 # Switch to Javascript's convention
-  doc['ordinal'] = i + 1
+  doc['ordinal'] = i++
   coll.insert(doc, :safe => true)
   debug ? pp(doc) : puts("Inserting #{doc['messagetype']} message")
   sleep(rate)
