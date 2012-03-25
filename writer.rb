@@ -79,12 +79,18 @@ docs = [{'messagetype' => 'simple', 'ordinal' => 0, 'somename' => 'somevalue'},
         {'messagetype' => 'complex', 'ordinal' =>0, 'subdocument' => {'fname' => 'George', 'lname' => 'Washington', 'subproperty' => 'US-president'}}]
 
 # Run until killed
-i = 0
+i = 1
 while(true)
   doc = docs[rand(3)].dup             # MongoDB collection.insert mutates document, editing the _id key; we need a deep dup (copy). 
   doc['time'] = Time.now().to_f * 1000 # Switch to Javascript's convention
-  doc['ordinal'] = i++
+  doc['ordinal'] = i
+  print i
   coll.insert(doc, :safe => true)
   debug ? pp(doc) : puts("Inserting #{doc['messagetype']} message")
   sleep(rate)
+  if i == 2**30 -1 then         # Not like we'll ever hit this at 1/sec, but someone could crank up the speed.
+    i = 1 else 
+    i = i + 1
+  end
+
 end
