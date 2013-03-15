@@ -6,12 +6,16 @@
 #
 
 #
-# ObjectLabs is the maker of MongoLab.com a cloud, hosted MongoDb
-# service
+# See also: https://github.com/mongolab/tractorpush-server
 #
 
 #
-# Copyright 2012 ObjectLabs Corp.  
+# ObjectLabs is the maker of MongoLab.com a MongoDB-as-a-Service
+# provider.
+#
+
+#
+# Copyright 2012, 2013 ObjectLabs Corp.  
 # 
 
 # MIT License
@@ -62,11 +66,12 @@ uri = URI.parse(uristring)
 conn = Mongo::Connection.from_uri(uristring)
 db   = conn.db(uri.path.gsub(/^\//, ''))
 
-coll = db.collection('messages')
+db.drop_collection('messages')
+coll = db.create_collection('messages', {capped: true, size: 8000000})
 
-docs = [{'messagetype' => 'simple', 'ordinal' => 0, 'somename' => 'somevalue'}, 
-        {'messagetype' => 'array', 'ordinal' => 0, 'somearray' => ['a', 'b', 'c', 'd']}, 
-        {'messagetype' => 'complex', 'ordinal' =>0, 'subdocument' => {'fname' => 'George', 'lname' => 'Washington', 'subproperty' => 'US-president'}}]
+docs = [{messagetype: 'simple', ordinal: 0, somename: 'somevalue'}, 
+        {messagetype: 'array', ordinal: 0, somearray: ['a', 'b', 'c', 'd']}, 
+        {messagetype: 'complex', ordinal:0, subdocument: {fname: 'George', lname: 'Washington', subproperty: 'US-president'}}]
 
 # Run until killed
 i = 1
